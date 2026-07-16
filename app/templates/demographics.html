@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const t = chartTokens();
   fetch('/api/nationalities-chart').then(r => r.json()).then(rows => {
     new ApexCharts(document.querySelector("#chart-nationality"), {
-      chart: { type: 'bar', height: 420, toolbar: { show: false }, background: 'transparent', animations: { enabled: false }, redrawOnParentResize: false },
+      chart: { type: 'bar', height: 420, toolbar: { show: false }, background: 'transparent' },
       theme: { mode: document.documentElement.getAttribute('data-theme') },
       series: [{ name: 'Market share', data: rows.map(r => r.market_share_pct) }],
       plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '65%', distributed: false } },
