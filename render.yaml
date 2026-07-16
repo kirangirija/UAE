@@ -9,7 +9,3 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
-      - key: OPENROUTER_MODEL
-        value: anthropic/claude-sonnet-4.5
-      - key: OPENROUTER_API_KEY
-        sync: false
