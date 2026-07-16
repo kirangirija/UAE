@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch('/api/areas-chart').then(r => r.json()).then(rows => {
     const cats = rows.map(r => r.name);
     new ApexCharts(document.querySelector("#chart-price-range"), {
-      chart: { type: 'rangeBar', height: 280, toolbar: { show: false }, background: 'transparent' },
+      chart: { type: 'rangeBar', height: 280, toolbar: { show: false }, background: 'transparent', animations: { enabled: false }, redrawOnParentResize: false },
       theme: { mode: document.documentElement.getAttribute('data-theme') },
       series: [{ data: rows.map(r => ({ x: r.name, y: [r.price_sqft_low, r.price_sqft_high] })) }],
       plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '45%' } },
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('/api/developers-chart').then(r => r.json()).then(rows => {
     new ApexCharts(document.querySelector("#chart-top-developers"), {
-      chart: { type: 'bar', height: 280, toolbar: { show: false }, background: 'transparent' },
+      chart: { type: 'bar', height: 280, toolbar: { show: false }, background: 'transparent', animations: { enabled: false }, redrawOnParentResize: false },
       theme: { mode: document.documentElement.getAttribute('data-theme') },
       series: [{ name: 'Sales value (AED bn)', data: rows.map(r => r.sales_value_aed_bn) }],
       plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '55%' } },
