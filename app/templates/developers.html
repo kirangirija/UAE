@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block page_title %}Developers{% endblock %}
+{% block page_subtitle %}Ranked by sales value, delivery record, and RERA compliance{% endblock %}
+
+{% block content %}
+<form method="get" class="flex flex-wrap items-center gap-3 mb-6">
+  <div class="flex items-center gap-2">
+    <label class="ink-muted">Sort by</label>
+    <select name="sort" onchange="this.form.submit()" class="card px-3 py-1.5 text-sm">
+      <option value="sales_value_aed_bn" {{ 'selected' if sort == 'sales_value_aed_bn' }}>Sales value</option>
+      <option value="on_time_delivery_pct" {{ 'selected' if sort == 'on_time_delivery_pct' }}>On-time delivery</option>
+      <option value="rera_score" {{ 'selected' if sort == 'rera_score' }}>RERA score</option>
+      <option value="name" {{ 'selected' if sort == 'name' }}>Name</option>
+    </select>
+  </div>
+  <div class="flex items-center gap-2">
+    <label class="ink-muted">Direction</label>
+    <select name="direction" onchange="this.form.submit()" class="card px-3 py-1.5 text-sm">
+      <option value="desc" {{ 'selected' if direction == 'desc' }}>High → Low</option>
+      <option value="asc" {{ 'selected' if direction == 'asc' }}>Low → High</option>
+    </select>
+  </div>
+</form>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  {% for d in developers %}
+  <div class="card p-5">
+    <div class="flex items-start justify-between">
+      <h3 class="font-semibold text-lg">{{ d.name }}</h3>
+      {% if d.rera_score %}
+      <span class="text-xs px-2 py-0.5 rounded-full" style="background: var(--gridline); color: var(--good);">RERA {{ d.rera_score|int }}/100</span>
+      {% endif %}
+    </div>
+    <div class="grid grid-cols-3 gap-3 mt-4">
+      <div>
+        <div class="ink-muted">Sales value</div>
+        <div class="tabular font-medium">{{ d.sales_value_aed_bn }} AED bn</div>
+        <div class="ink-muted">{{ d.sales_value_period }}</div>
+      </div>
+      <div>
+        <div class="ink-muted">Units delivered</div>
+        <div class="tabular font-medium">{{ d.units_delivered or "—" }}</div>
+        <div class="ink-muted">{{ d.units_delivered_period or "" }}</div>
+      </div>
+      <div>
+        <div class="ink-muted">On-time delivery</div>
+        <div class="tabular font-medium">{{ (d.on_time_delivery_pct ~ '%') if d.on_time_delivery_pct else "—" }}</div>
+      </div>
+    </div>
+    <p class="ink-secondary mt-4">{{ d.positioning_note }}</p>
+    <a href="{{ d.source_url }}" target="_blank" class="source-tag underline mt-3 inline-block">{{ d.source_name }} · retrieved {{ d.retrieved_date }}</a>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

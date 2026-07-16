@@ -1,0 +1,9 @@
+{# Expects `sources`: list of {source_name, source_url, retrieved_date} #}
+<p class="ink-muted mb-4">
+  {% if sources %}
+  Source{{ 's' if sources|length > 1 }}:
+  {% for s in sources %}<a href="{{ s.source_url }}" target="_blank" rel="noopener" class="underline decoration-dotted">{{ s.source_name }}</a>{% if s.retrieved_date %} (retrieved {{ s.retrieved_date }}){% endif %}{{ ', ' if not loop.last }}{% endfor %}
+  {% else %}
+  No source on file for this chart.
+  {% endif %}
+</p>

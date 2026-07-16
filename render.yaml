@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: uae-real-estate-dashboard
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt && python app/db/seed.py"
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: OPENROUTER_MODEL
+        value: anthropic/claude-sonnet-4.5
+      - key: OPENROUTER_API_KEY
+        sync: false

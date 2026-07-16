@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block page_title %}Buyer Demographics & Brokerages{% endblock %}
+{% block page_subtitle %}Who is buying, and who is selling it to them{% endblock %}
+
+{% block content %}
+<div class="card p-5 mb-6">
+  <h3 class="font-medium mb-1">Buyer nationality — market share</h3>
+  <p class="ink-muted mb-1">Early 2026</p>
+  {% set sources = nationality_sources %}
+  {% include "_source_cite.html" with context %}
+  <div id="chart-nationality" style="min-height:420px"></div>
+</div>
+
+<div class="card overflow-x-auto">
+  <table class="data-table w-full text-sm">
+    <thead><tr>
+      <th class="text-left py-3 px-4">Brokerage</th>
+      <th class="text-left py-3 px-4">Founded</th>
+      <th class="text-left py-3 px-4">Agents</th>
+      <th class="text-left py-3 px-4">DLD tier</th>
+      <th class="text-left py-3 px-4">Score</th>
+      <th class="text-left py-3 px-4">Specialty</th>
+      <th class="text-left py-3 px-4">Source</th>
+    </tr></thead>
+    <tbody>
+      {% for b in brokerages %}
+      <tr>
+        <td class="py-3 px-4 font-medium">{{ b.name }}</td>
+        <td class="py-3 px-4 ink-secondary">{{ b.founded_year or "—" }}</td>
+        <td class="py-3 px-4 ink-secondary">{{ b.agent_count or "—" }}</td>
+        <td class="py-3 px-4 ink-secondary">{{ b.dld_tier or "—" }}</td>
+        <td class="py-3 px-4 tabular">{{ b.score or "—" }}</td>
+        <td class="py-3 px-4 ink-secondary">{{ b.specialty_note }}</td>
+        <td class="py-3 px-4">
+          <a href="{{ b.source_url }}" target="_blank" rel="noopener" class="source-tag underline">{{ b.source_name }}</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const t = chartTokens();
+  fetch('/api/nationalities-chart').then(r => r.json()).then(rows => {
+    new ApexCharts(document.querySelector("#chart-nationality"), {
+      chart: { type: 'bar', height: 420, toolbar: { show: false }, background: 'transparent' },
+      theme: { mode: document.documentElement.getAttribute('data-theme') },
+      series: [{ name: 'Market share', data: rows.map(r => r.market_share_pct) }],
+      plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '65%', distributed: false } },
+      colors: [t.categorical[0]],
+      xaxis: { categories: rows.map(r => r.nationality), labels: { style: { colors: t.textMuted }, formatter: (v) => v + '%' }, axisBorder: { color: t.gridline }, axisTicks: { color: t.gridline } },
+      yaxis: { labels: { style: { colors: t.textSecondary } } },
+      grid: { borderColor: t.gridline },
+      dataLabels: { enabled: true, formatter: (v) => v + '%', style: { colors: [t.textSecondary] }, offsetX: 20 },
+      tooltip: { theme: document.documentElement.getAttribute('data-theme'), y: { formatter: (v) => v + '% of buyers' } },
+    }).render();
+  });
+});
+</script>
+{% endblock %}

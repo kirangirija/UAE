@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block page_title %}Areas Intelligence{% endblock %}
+{% block page_subtitle %}Price bands, yields, and momentum by neighbourhood{% endblock %}
+
+{% block content %}
+<form method="get" class="flex flex-wrap items-center gap-3 mb-6">
+  <div class="flex items-center gap-2">
+    <label class="ink-muted">Momentum</label>
+    <select name="momentum" onchange="this.form.submit()" class="card px-3 py-1.5 text-sm">
+      <option value="all" {{ 'selected' if momentum == 'all' }}>All</option>
+      {% for m in momentum_options %}
+      <option value="{{ m }}" {{ 'selected' if momentum == m }}>{{ m }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="flex items-center gap-2">
+    <label class="ink-muted">Sort by</label>
+    <select name="sort" onchange="this.form.submit()" class="card px-3 py-1.5 text-sm">
+      <option value="yoy_price_growth_pct" {{ 'selected' if sort == 'yoy_price_growth_pct' }}>YoY price growth</option>
+      <option value="price_sqft_low" {{ 'selected' if sort == 'price_sqft_low' }}>Price / sq.ft.</option>
+      <option value="rental_yield_high" {{ 'selected' if sort == 'rental_yield_high' }}>Rental yield</option>
+      <option value="name" {{ 'selected' if sort == 'name' }}>Name</option>
+    </select>
+  </div>
+  <div class="flex items-center gap-2">
+    <label class="ink-muted">Direction</label>
+    <select name="direction" onchange="this.form.submit()" class="card px-3 py-1.5 text-sm">
+      <option value="desc" {{ 'selected' if direction == 'desc' }}>High → Low</option>
+      <option value="asc" {{ 'selected' if direction == 'asc' }}>Low → High</option>
+    </select>
+  </div>
+</form>
+
+<div class="card overflow-x-auto">
+  <table class="data-table w-full text-sm">
+    <thead><tr>
+      <th class="text-left py-3 px-4">Area</th>
+      <th class="text-left py-3 px-4">Price / sq.ft. (AED)</th>
+      <th class="text-left py-3 px-4">Rental yield</th>
+      <th class="text-left py-3 px-4">YoY price growth</th>
+      <th class="text-left py-3 px-4">Momentum</th>
+      <th class="text-left py-3 px-4">Focus</th>
+      <th class="text-left py-3 px-4">Source</th>
+    </tr></thead>
+    <tbody>
+      {% for a in areas %}
+      <tr>
+        <td class="py-3 px-4 font-medium">{{ a.name }}</td>
+        <td class="py-3 px-4 tabular ink-secondary">
+          {% if a.price_sqft_low %}{{ a.price_sqft_low|int }}–{{ a.price_sqft_high|int }}{% else %}—{% endif %}
+        </td>
+        <td class="py-3 px-4 tabular ink-secondary">
+          {% if a.rental_yield_low %}{{ a.rental_yield_low|int }}–{{ a.rental_yield_high|int }}%{% else %}—{% endif %}
+        </td>
+        <td class="py-3 px-4 tabular">
+          {% if a.yoy_price_growth_pct %}<span style="color: var(--good);">▲ {{ a.yoy_price_growth_pct }}%</span>{% else %}—{% endif %}
+        </td>
+        <td class="py-3 px-4">
+          <span class="px-2 py-0.5 rounded-full text-xs" style="background: var(--gridline); color: var(--text-secondary);">{{ a.momentum_label }}</span>
+        </td>
+        <td class="py-3 px-4 ink-secondary">{{ a.project_type_focus }}</td>
+        <td class="py-3 px-4">
+          <a href="{{ a.source_url }}" target="_blank" class="source-tag underline">{{ a.source_name }}</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

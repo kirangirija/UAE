@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+  (function () {
+    const saved = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', saved);
+  })();
+</script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{% block title %}UAE Real Estate Intelligence{% endblock %}</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3"></script>
+<style>
+  :root {
+    --surface-1: #fcfcfb; --page-plane: #f9f9f7;
+    --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #898781;
+    --gridline: #e1e0d9; --baseline: #c3c2b7; --border: rgba(11,11,11,0.10);
+    --good: #0ca30c; --warning: #fab219; --serious: #ec835a; --critical: #d03b3b;
+    --series-1: #2a78d6; --series-2: #1baf7a; --series-3: #eda100; --series-4: #008300;
+    --series-5: #4a3aa7; --series-6: #e34948; --series-7: #e87ba4; --series-8: #eb6834;
+  }
+  html[data-theme="dark"] {
+    --surface-1: #1a1a19; --page-plane: #0d0d0d;
+    --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #898781;
+    --gridline: #2c2c2a; --baseline: #383835; --border: rgba(255,255,255,0.10);
+    --good: #0ca30c; --warning: #fab219; --serious: #ec835a; --critical: #d03b3b;
+    --series-1: #3987e5; --series-2: #199e70; --series-3: #c98500; --series-4: #008300;
+    --series-5: #9085e9; --series-6: #e66767; --series-7: #d55181; --series-8: #d95926;
+  }
+  body { background: var(--page-plane); color: var(--text-primary); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; }
+  .ink-secondary { color: var(--text-secondary); }
+  .ink-muted { color: var(--text-muted); font-size: 0.8125rem; }
+  .nav-link { color: var(--text-secondary); }
+  .nav-link.active { color: var(--text-primary); background: var(--gridline); }
+  table.data-table th { color: var(--text-muted); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.03em; border-bottom: 1px solid var(--gridline); }
+  table.data-table td { border-bottom: 1px solid var(--gridline); }
+  table.data-table tr:last-child td { border-bottom: none; }
+  ::-webkit-scrollbar { height: 8px; width: 8px; }
+  .tabular { font-variant-numeric: tabular-nums; }
+  .source-tag { color: var(--text-muted); font-size: 0.6875rem; }
+</style>
+{% block extra_head %}{% endblock %}
+</head>
+<body class="min-h-screen">
+<div class="flex min-h-screen">
+  <aside class="w-64 shrink-0 border-r hidden md:flex flex-col" style="border-color: var(--border);">
+    <div class="px-6 py-5">
+      <div class="text-sm ink-muted tracking-widest">UAE</div>
+      <div class="text-lg font-semibold leading-tight">Real Estate<br/>Intelligence</div>
+    </div>
+    <nav class="px-3 space-y-1 flex-1">
+      {% for href, label in nav %}
+      <a href="{{ href }}" class="nav-link flex items-center px-3 py-2 rounded-lg text-sm font-medium {{ 'active' if active == href else '' }}">{{ label }}</a>
+      {% endfor %}
+    </nav>
+    <div class="px-6 py-4 ink-muted leading-relaxed">
+      Dubai market data · curated from public reports, refreshed monthly. Live DLD transaction sync coming soon.
+    </div>
+  </aside>
+  <main class="flex-1 min-w-0">
+    <header class="flex items-center justify-between px-6 md:px-10 py-5 border-b" style="border-color: var(--border);">
+      <div>
+        <h1 class="text-xl font-semibold">{% block page_title %}{% endblock %}</h1>
+        <p class="ink-secondary text-sm mt-0.5">{% block page_subtitle %}{% endblock %}</p>
+      </div>
+      <button onclick="toggleTheme()" class="card px-3 py-1.5 text-sm ink-secondary rounded-lg">Toggle theme</button>
+    </header>
+    <div class="px-6 md:px-10 py-8">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+</div>
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('theme', next);
+    location.reload();
+  }
+  function chartTokens() {
+    const s = getComputedStyle(document.documentElement);
+    const v = (name) => s.getPropertyValue(name).trim();
+    return {
+      categorical: [1,2,3,4,5,6,7,8].map(i => v(`--series-${i}`)),
+      textSecondary: v('--text-secondary'),
+      textMuted: v('--text-muted'),
+      gridline: v('--gridline'),
+      surface: v('--surface-1'),
+    };
+  }
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block page_title %}Market Overview{% endblock %}
+{% block page_subtitle %}Dubai real estate at a glance{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+  {% for k in kpis if k.metric_name in ['Full-year transaction value','Total transaction value','Off-plan share of transaction value','Total investment value'] %}
+  <div class="card p-5" x-data="{ show: false }">
+    <div class="ink-muted mb-1">{{ k.metric_name }} · {{ k.period_label }}</div>
+    <div class="text-2xl font-semibold tabular">
+      {{ '%.1f'|format(k.value) if k.value < 1000 else '{:,.0f}'.format(k.value) }} {{ k.unit }}
+    </div>
+    {% if k.yoy_change_pct %}
+    <div class="text-sm mt-1" style="color: var(--good);">▲ {{ k.yoy_change_pct }}% YoY</div>
+    {% endif %}
+    <button class="source-tag mt-2 underline decoration-dotted" @click="show = !show">source</button>
+    <div x-show="show" x-cloak class="source-tag mt-1 leading-snug">
+      {{ k.note }}<br/>
+      <a href="{{ k.source_url }}" target="_blank" class="underline">{{ k.source_name }}</a> · retrieved {{ k.retrieved_date }}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+  <div class="card p-5">
+    <h3 class="font-medium mb-1">Price per sq. ft. range by area</h3>
+    <p class="ink-muted mb-1">AED / sq. ft., low–high reported range</p>
+    {% set sources = price_range_sources %}
+    {% include "_source_cite.html" with context %}
+    <div id="chart-price-range" style="min-height:280px"></div>
+  </div>
+  <div class="card p-5">
+    <h3 class="font-medium mb-1">Top developers by 2025 sales value</h3>
+    <p class="ink-muted mb-1">AED billions</p>
+    {% set sources = developer_chart_sources %}
+    {% include "_source_cite.html" with context %}
+    <div id="chart-top-developers" style="min-height:280px"></div>
+  </div>
+</div>
+
+<div class="card p-5">
+  <h3 class="font-medium mb-4">Booming areas to watch</h3>
+  <table class="data-table w-full text-sm">
+    <thead><tr>
+      <th class="text-left py-2">Area</th>
+      <th class="text-left py-2">Momentum</th>
+      <th class="text-left py-2">Focus</th>
+      <th class="text-left py-2">Notes</th>
+    </tr></thead>
+    <tbody>
+      {% for a in top_areas %}
+      <tr>
+        <td class="py-2.5 font-medium">{{ a.name }}</td>
+        <td class="py-2.5">
+          <span class="px-2 py-0.5 rounded-full text-xs" style="background: var(--gridline); color: var(--text-secondary);">{{ a.momentum_label }}</span>
+        </td>
+        <td class="py-2.5 ink-secondary">{{ a.project_type_focus }}</td>
+        <td class="py-2.5 ink-secondary">{{ a.notes }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const t = chartTokens();
+
+  fetch('/api/areas-chart').then(r => r.json()).then(rows => {
+    const cats = rows.map(r => r.name);
+    new ApexCharts(document.querySelector("#chart-price-range"), {
+      chart: { type: 'rangeBar', height: 280, toolbar: { show: false }, background: 'transparent' },
+      theme: { mode: document.documentElement.getAttribute('data-theme') },
+      series: [{ data: rows.map(r => ({ x: r.name, y: [r.price_sqft_low, r.price_sqft_high] })) }],
+      plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '45%' } },
+      colors: [t.categorical[0]],
+      xaxis: { categories: cats, labels: { style: { colors: t.textMuted } }, axisBorder: { color: t.gridline }, axisTicks: { color: t.gridline } },
+      yaxis: { labels: { style: { colors: t.textSecondary } } },
+      grid: { borderColor: t.gridline },
+      dataLabels: { enabled: false },
+      tooltip: { theme: document.documentElement.getAttribute('data-theme') },
+    }).render();
+  });
+
+  fetch('/api/developers-chart').then(r => r.json()).then(rows => {
+    new ApexCharts(document.querySelector("#chart-top-developers"), {
+      chart: { type: 'bar', height: 280, toolbar: { show: false }, background: 'transparent' },
+      theme: { mode: document.documentElement.getAttribute('data-theme') },
+      series: [{ name: 'Sales value (AED bn)', data: rows.map(r => r.sales_value_aed_bn) }],
+      plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '55%' } },
+      colors: [t.categorical[1]],
+      xaxis: { categories: rows.map(r => r.name), labels: { style: { colors: t.textMuted } }, axisBorder: { color: t.gridline }, axisTicks: { color: t.gridline } },
+      yaxis: { labels: { style: { colors: t.textSecondary } } },
+      grid: { borderColor: t.gridline },
+      dataLabels: { enabled: false },
+      tooltip: { theme: document.documentElement.getAttribute('data-theme') },
+    }).render();
+  });
+});
+</script>
+{% endblock %}
