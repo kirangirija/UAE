@@ -61,6 +61,22 @@
     <div class="px-6 py-4 ink-muted leading-relaxed">
       Dubai market data · curated from public reports, refreshed monthly. Live DLD transaction sync coming soon.
     </div>
+    {% if current_user %}
+    <div class="px-6 py-4 border-t" style="border-color: var(--border);">
+      <div class="flex items-center gap-2 mb-2">
+        {% if current_user.picture %}
+        <img src="{{ current_user.picture }}" class="w-6 h-6 rounded-full" referrerpolicy="no-referrer" />
+        {% endif %}
+        <div class="text-sm truncate">{{ current_user.name or current_user.email }}</div>
+      </div>
+      <div class="flex items-center gap-3 ink-muted">
+        {% if is_admin %}
+        <a href="/admin/stats" class="underline">Admin stats</a>
+        {% endif %}
+        <a href="/logout" class="underline">Log out</a>
+      </div>
+    </div>
+    {% endif %}
   </aside>
   <main class="flex-1 min-w-0">
     <header class="flex items-center justify-between px-6 md:px-10 py-5 border-b" style="border-color: var(--border);">

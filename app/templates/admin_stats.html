@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block page_title %}Admin — Usage Stats{% endblock %}
+{% block page_subtitle %}Who's signed in and what they've viewed{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+  <div class="card p-5">
+    <div class="ink-muted mb-1">Unique users</div>
+    <div class="text-2xl font-semibold tabular">{{ users|length }}</div>
+  </div>
+  <div class="card p-5">
+    <div class="ink-muted mb-1">Total logins</div>
+    <div class="text-2xl font-semibold tabular">{{ total_logins }}</div>
+  </div>
+  <div class="card p-5">
+    <div class="ink-muted mb-1">Total page views</div>
+    <div class="text-2xl font-semibold tabular">{{ recent_views|length }}{% if recent_views|length == 50 %}+{% endif %}</div>
+  </div>
+</div>
+
+<div class="card overflow-x-auto mb-8">
+  <div class="px-4 pt-4 font-medium">Users</div>
+  <table class="data-table w-full text-sm">
+    <thead><tr>
+      <th class="text-left py-3 px-4">Email</th>
+      <th class="text-left py-3 px-4">Name</th>
+      <th class="text-left py-3 px-4">First seen</th>
+      <th class="text-left py-3 px-4">Last seen</th>
+      <th class="text-left py-3 px-4">Logins</th>
+    </tr></thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td class="py-3 px-4 font-medium">{{ u.email }}</td>
+        <td class="py-3 px-4 ink-secondary">{{ u.name or "—" }}</td>
+        <td class="py-3 px-4 ink-secondary">{{ u.first_seen[:19] }}</td>
+        <td class="py-3 px-4 ink-secondary">{{ u.last_seen[:19] }}</td>
+        <td class="py-3 px-4 tabular">{{ u.login_count }}</td>
+      </tr>
+      {% else %}
+      <tr><td class="py-3 px-4 ink-muted" colspan="5">No logins yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+  <div class="card overflow-x-auto">
+    <div class="px-4 pt-4 font-medium">Most-viewed pages</div>
+    <table class="data-table w-full text-sm">
+      <thead><tr>
+        <th class="text-left py-3 px-4">Path</th>
+        <th class="text-left py-3 px-4">Views</th>
+      </tr></thead>
+      <tbody>
+        {% for p in page_view_counts %}
+        <tr>
+          <td class="py-3 px-4 font-medium">{{ p.path }}</td>
+          <td class="py-3 px-4 tabular">{{ p.views }}</td>
+        </tr>
+        {% else %}
+        <tr><td class="py-3 px-4 ink-muted" colspan="2">No page views yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card overflow-x-auto">
+    <div class="px-4 pt-4 font-medium">Recent activity</div>
+    <table class="data-table w-full text-sm">
+      <thead><tr>
+        <th class="text-left py-3 px-4">Email</th>
+        <th class="text-left py-3 px-4">Path</th>
+        <th class="text-left py-3 px-4">When</th>
+      </tr></thead>
+      <tbody>
+        {% for v in recent_views %}
+        <tr>
+          <td class="py-3 px-4 ink-secondary">{{ v.email }}</td>
+          <td class="py-3 px-4 font-medium">{{ v.path }}</td>
+          <td class="py-3 px-4 ink-secondary">{{ v.viewed_at[:19] }}</td>
+        </tr>
+        {% else %}
+        <tr><td class="py-3 px-4 ink-muted" colspan="3">No activity yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+  (function () {
+    const saved = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', saved);
+  })();
+</script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sign in — UAE Real Estate Intelligence</title>
+<style>
+  :root {
+    --surface-1: #fcfcfb; --page-plane: #f9f9f7;
+    --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #898781;
+    --gridline: #e1e0d9; --border: rgba(11,11,11,0.10);
+    --series-1: #2a78d6;
+  }
+  html[data-theme="dark"] {
+    --surface-1: #1a1a19; --page-plane: #0d0d0d;
+    --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #898781;
+    --gridline: #2c2c2a; --border: rgba(255,255,255,0.10);
+    --series-1: #3987e5;
+  }
+  body {
+    background: var(--page-plane); color: var(--text-primary);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    margin: 0;
+  }
+  .card {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 16px;
+    padding: 2.5rem; width: 100%; max-width: 380px; text-align: center;
+  }
+  .eyebrow { color: var(--text-muted); font-size: 0.8125rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  h1 { font-size: 1.375rem; font-weight: 600; margin: 0.5rem 0 0.5rem; }
+  p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; margin: 0 0 1.75rem; }
+  .google-btn {
+    display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+    width: 100%; padding: 0.7rem 1rem; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--surface-1); color: var(--text-primary);
+    font-size: 0.9375rem; font-weight: 500; text-decoration: none;
+  }
+  .google-btn:hover { background: var(--gridline); }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="eyebrow">UAE Real Estate Intelligence</div>
+    <h1>Dubai market dashboard</h1>
+    <p>Sign in with Google to view developer rankings, area price trends, and buyer demographics.</p>
+    <a class="google-btn" href="/auth/login?next={{ next|default('/') }}">
+      <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z"/>
+        <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.85.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18z"/>
+        <path fill="#FBBC05" d="M3.97 10.72A5.4 5.4 0 0 1 3.68 9c0-.6.1-1.18.29-1.72V4.95H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.05l3.01-2.33z"/>
+        <path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.59-2.59C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.95l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"/>
+      </svg>
+      Sign in with Google
+    </a>
+  </div>
+</body>
+</html>

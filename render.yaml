@@ -5,7 +5,21 @@ services:
     plan: free
     buildCommand: "pip install -r requirements.txt && python app/db/seed.py"
     startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
-    healthCheckPath: /
+    healthCheckPath: /healthz
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
+      - key: PUBLIC_BASE_URL
+        value: https://uae-real-estate-dashboard.onrender.com
+      - key: ADMIN_EMAIL
+        value: kiramani@gmail.com
+      - key: SUPABASE_URL
+        value: https://rxubqijoybcywhgjorli.supabase.co
+      - key: SUPABASE_ANON_KEY
+        value: sb_publishable_USkX3_PuRec89rmhQ80sKg_wa_cwksI
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: SESSION_SECRET_KEY
+        sync: false
